@@ -1,28 +1,24 @@
-const express = require("express");
 const { google } = require("googleapis");
-const bodyParser = require("body-parser");
 const fs = require("fs");
-
-// Load service account key
-const serviceAccount = require("./atomic-vault-425506-s3-66413ff4b7c0.json");
-
-const app = express();
-app.use(bodyParser.json());
+const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 
 // Google Sheets setup
 const auth = new google.auth.GoogleAuth({
-  credentials: serviceAccount,
+  keyFile: serviceAccount, // Path to your service account JSON
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
 const sheets = google.sheets({ version: "v4", auth });
 
-// Replace with your Google Sheet ID and range
-const SPREADSHEET_ID = "1g_F1G9ENEAlCkn7wnYbWjf0v4FgBuqQiJBGUmEIfs4A";
-const RANGE = "Sheet1!A:B"; // Assuming A for latitude, B for longitude
+// Google Sheet configuration
+const SPREADSHEET_ID = "1g_F1G9ENEAlCkn7wnYbWjf0v4FgBuqQiJBGUmEIfs4A"; // Replace with your spreadsheet ID
+const RANGE = "Sheet1!A:B"; // Adjust range as needed
 
-// Endpoint to store location
-app.post("/save-location", async (req, res) => {
+module.exports = async (req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).send({ error: "Only POST requests are allowed." });
+  }
+
   const { latitude, longitude } = req.body;
 
   if (!latitude || !longitude) {
@@ -36,7 +32,7 @@ app.post("/save-location", async (req, res) => {
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: RANGE,
-      valueInputOption: "RAW",
+      valueInputOption: "USER_ENTERED",
       resource: {
         values: [[latitude, longitude, new Date().toISOString()]], // Add timestamp
       },
@@ -47,10 +43,4 @@ app.post("/save-location", async (req, res) => {
     console.error("Error saving location:", err);
     res.status(500).send({ error: "Failed to save location." });
   }
-});
-
-// Start server
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+};
