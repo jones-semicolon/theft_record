@@ -12,16 +12,16 @@ const sheets = google.sheets({ version: "v4", auth });
 
 // Google Sheet configuration
 const SPREADSHEET_ID = "1g_F1G9ENEAlCkn7wnYbWjf0v4FgBuqQiJBGUmEIfs4A"; // Replace with your spreadsheet ID
-const RANGE = "Sheet1!A:B"; // Adjust range as needed
+const RANGE = "Sheet1!A:E"; // Adjust range as needed
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).send({ error: "Only POST requests are allowed." });
   }
 
-  const { latitude, longitude, link } = req.body;
+  const { latitude, longitude, link, status } = req.body;
 
-  if (!latitude || !longitude || !link) {
+  if (!latitude || !longitude || !link || !status) {
     return res
       .status(400)
       .send({ error: "Latitude and longitude are required." });
@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
       range: RANGE,
       valueInputOption: "USER_ENTERED",
       resource: {
-        values: [[new Date().toISOString(), latitude, longitude, link]], // Add timestamp
+        values: [[status, new Date().toISOString(), latitude, longitude, link]], // Add timestamp
       },
     });
 
