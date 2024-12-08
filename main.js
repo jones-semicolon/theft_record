@@ -35,7 +35,13 @@ module.exports = async (req, res) => {
       valueInputOption: "USER_ENTERED",
       resource: {
         values: [
-          [status, new Date().toLocaleString(), latitude, longitude, link],
+          [
+            status,
+            new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }),
+            latitude,
+            longitude,
+            link,
+          ],
         ], // Add timestamp
       },
     });
