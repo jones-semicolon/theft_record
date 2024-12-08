@@ -19,9 +19,9 @@ module.exports = async (req, res) => {
     return res.status(405).send({ error: "Only POST requests are allowed." });
   }
 
-  const { latitude, longitude } = req.body;
+  const { latitude, longitude, link } = req.body;
 
-  if (!latitude || !longitude) {
+  if (!latitude || !longitude || !link) {
     return res
       .status(400)
       .send({ error: "Latitude and longitude are required." });
@@ -32,9 +32,9 @@ module.exports = async (req, res) => {
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: RANGE,
-      valueInputOption: "RAW",
+      valueInputOption: "USER_ENTERED",
       resource: {
-        values: [[latitude, longitude, new Date().toISOString()]], // Add timestamp
+        values: [[new Date().toISOString(), latitude, longitude, link]], // Add timestamp
       },
     });
 
