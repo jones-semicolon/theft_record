@@ -4,7 +4,10 @@ const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 
 // Google Sheets setup
 const auth = new google.auth.GoogleAuth({
-  keyFile: serviceAccount, // Path to your service account JSON
+  credentials: {
+    client_email: process.env.GOOGLE_CLIENT_EMAIL, // Extracted from the service account JSON
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"), // Ensure proper formatting
+  },
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
