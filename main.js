@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: RANGE,
-      valueInputOption: "USER_ENTERED",
+      valueInputOption: "RAW",
       resource: {
         values: [[latitude, longitude, new Date().toISOString()]], // Add timestamp
       },
