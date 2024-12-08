@@ -34,7 +34,9 @@ module.exports = async (req, res) => {
       range: RANGE,
       valueInputOption: "USER_ENTERED",
       resource: {
-        values: [[status, new Date().toISOString(), latitude, longitude, link]], // Add timestamp
+        values: [
+          [status, new Date().toLocaleString(), latitude, longitude, link],
+        ], // Add timestamp
       },
     });
 
